@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <title>Sample Banking App</title>
+        <link rel="stylesheet" href="css/panel.css">
+    </head>
+
+    <body>
+    <style type="text/css">
+        body {
+            background-color: #c7f1ff;
+            width: 100%;
+        }
+    </style>
+
+    <div class="panel">
+        <h2>Sample Banking App</h2>
+    </div>
+
+    <br>
+
+    <div class="panel">
+        <h4>Login</h4>
+        <input id="username-text" type="text" placeholder="Username" style="border-radius: 20px">
+        <br><br>
+        <input id="password-text" type="password" placeholder="Password" style="border-radius: 20px">
+        <br><br>
+        <input id ="confirmPassword-text" type="password" placeholder="Confirm Password" style="border-radius: 20px; display: none">
+        <div style="display: flex; width: 50%; margin: auto">
+            <button id="login-button" style="flex: 0 0 50%; border-radius: 20px; margin: 10px" onclick="login(document.getElementById('username-text').value, document.getElementById('password-text').value)">Login</button>
+            <button id="register-button" style="flex: 0 0 50%; border-radius: 20px; margin: 10px" onclick="register(document.getElementById('username-text').value, document.getElementById('password-text').value)">Register</button>
+        </div>
+    </div>
+
+    <!-- scripts -->
+    <script type="text/javascript" src="js/Authentication.js"></script>
+    </body>
+</html>
