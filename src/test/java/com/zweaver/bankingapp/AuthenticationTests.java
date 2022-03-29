@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -31,8 +32,15 @@ public class AuthenticationTests {
     private UserRepository userRepository;
 
     @BeforeEach
-    public void setUp() {
+    public void setUp() throws Exception {
         userRepository.deleteAll();
+
+        // every test relies on a user being created
+        UserEntity newUser = new UserEntity("jim", "123");
+        mockMvc.perform(post("/api/v1/users/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(newUser)))
+                .andExpect(status().isCreated());
     }
 
     @AfterEach
@@ -41,11 +49,47 @@ public class AuthenticationTests {
     }
 
     @Test
-    public void createNewUser() throws Exception {
+    public void createNewUserThatAlreadyExists() throws Exception {
+        UserEntity newUser2 = new UserEntity("jim", "456");
+        mockMvc.perform(post("/api/v1/users/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(newUser2)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void logInSuccessfully() throws Exception {
         UserEntity newUser = new UserEntity("jim", "123");
+        mockMvc.perform(post("/api/v1/users/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(newUser)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void logInWithWrongCredentials() throws Exception {
+        UserEntity newUser = new UserEntity("jim", "456");
         mockMvc.perform(post("/api/v1/users/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(newUser)))
-                .andExpect(status().isCreated());
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void deleteUserThatAlreadyExists() throws Exception {
+        UserEntity newUser = new UserEntity("jim", "123");
+        mockMvc.perform(delete("/api/v1/users/delete")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(newUser)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void deleteUserThatDoesNotExist() throws Exception {
+        UserEntity newUser = new UserEntity("kyle", "123");
+        mockMvc.perform(delete("/api/v1/users/delete")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(newUser)))
+                .andExpect(status().isBadRequest());
     }
 }

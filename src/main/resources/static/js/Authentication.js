@@ -1,4 +1,4 @@
-const endpoint_base = "http://localhost:8080/api/v1/users/";
+const endpoint_base = "http://localhost:8080/api/v1/users";
 
 function formatResponse(username, password) {
     let response = {
@@ -16,13 +16,17 @@ function formatResponse(username, password) {
 }
 
 async function register(username, password) {
+    if (username.length === 0 || password.length === 0) {
+        alert("Username or password cannot be empty.");
+        return;
+    }
     let confirmPassword = document.getElementById("confirmPassword-text");
     confirmPassword.style.display = "";
     document.getElementById("login-button").style.display = "none";
     document.getElementById("register-button").style.flex = "0 0 100%";
 
     if (confirmPassword.value.length > 0 && password === confirmPassword.value) {
-        await fetch(`${endpoint_base}/register`, formatResponse(username, password))
+        await fetch('http://localhost:8080/api/v1/users/register', formatResponse(username, password))
         .then(response => {
             switch (response.status) {
                 case 201:
@@ -41,7 +45,12 @@ async function register(username, password) {
 }
 
 async function login(username, password) {
-    await fetch(`${endpoint_base}/login`, formatResponse(username, password))
+    if (username.length === 0 || password.length === 0) {
+        alert("Username or password cannot be empty.");
+        return;
+    }
+    
+    await fetch('http://localhost:8080/api/v1/users/login', formatResponse(username, password))
     .then(response => {
         switch (response.status) {
             case 200:
